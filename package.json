@@ -1,0 +1,18 @@
+{
+  "name": "minipoker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mini Poker Monorepo",
+  "scripts": {
+    "dev": "pnpm -F * dev",
+    "build": "pnpm -F * build",
+    "test": "pnpm -F * test"
+  },
+  "devDependencies": {},
+  "keywords": ["poker", "monorepo"],
+  "author": "",
+  "license": "MIT",
+  "pnpm": {
+    "workspace": ["packages/*", "apps/*"]
+  }
+}

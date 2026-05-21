@@ -1,2 +1,5 @@
 .trae/
 .DS_STORE
+node_modules/
+packages/*/node_modules/
+packages/*/dist/

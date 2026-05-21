@@ -1,0 +1,32 @@
+{
+  "name": "@mini-poker/electron",
+  "version": "1.0.0",
+  "description": "Mini Poker Electron Desktop App",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "electron": "^30.0.1",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0",
+    "vite-plugin-electron": "^0.28.0",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vue-tsc": "^2.0.0"
+  },
+  "dependencies": {
+    "pinia": "^2.1.7",
+    "socket.io-client": "^4.8.3",
+    "vue": "^3.4.0"
+  },
+  "keywords": [
+    "poker",
+    "electron",
+    "desktop"
+  ],
+  "author": "",
+  "license": "MIT"
+}
