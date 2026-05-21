@@ -1,0 +1,174 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            platform: darwin
+            arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+          - os: windows-latest
+            platform: win32
+            arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build game-core
+        run: |
+          cd packages/game-core
+          pnpm build
+
+      - name: Build Electron app
+        run: |
+          cd apps/electron
+          pnpm build
+
+      - name: Build distributable
+        run: |
+          cd apps/electron
+          pnpm package
+
+      - name: Upload macOS x64 artifacts
+        if: matrix.platform == 'darwin' && matrix.arch == 'x64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-x64
+          path: apps/electron/out/*.dmg
+          retention-days: 7
+
+      - name: Upload macOS arm64 artifacts
+        if: matrix.platform == 'darwin' && matrix.arch == 'arm64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: apps/electron/out/*.dmg
+          retention-days: 7
+
+      - name: Upload Windows artifacts
+        if: matrix.platform == 'win32'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: apps/electron/out/*.exe
+          retention-days: 7
+
+      - name: Upload Linux artifacts
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: apps/electron/out/*.AppImage
+          retention-days: 7
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/macos-x64/*.dmg
+            artifacts/macos-arm64/*.dmg
+            artifacts/windows/*.exe
+            artifacts/linux/*.AppImage
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos-universal:
+    needs: build
+    if: always() && (needs.build.result == 'success' || needs.build.result == 'skipped')
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: ls -la artifacts/
+
+      - name: Create Universal DMG
+        run: |
+          # Check if both architectures are available
+          if [ -f "artifacts/macos-x64/MiniPoker-x64.dmg" ] && [ -f "artifacts/macos-arm64/MiniPoker-arm64.dmg" ]; then
+            echo "Both architectures available, would create universal DMG here"
+            # Note: Creating universal DMG requires special tooling
+            # For now, we'll upload both versions separately
+            cp artifacts/macos-x64/*.dmg out/
+            cp artifacts/macos-arm64/*.dmg out/
+          elif [ -f "artifacts/macos-x64/MiniPoker-x64.dmg" ]; then
+            cp artifacts/macos-x64/*.dmg out/
+          elif [ -f "artifacts/macos-arm64/MiniPoker-arm64.dmg" ]; then
+            cp artifacts/macos-arm64/*.dmg out/
+          fi
+
+      - name: Upload Universal artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-universal
+          path: out/*.dmg
+          retention-days: 7
