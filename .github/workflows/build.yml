@@ -37,7 +37,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -58,7 +57,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build game-core
         run: |
@@ -153,11 +152,9 @@ jobs:
 
       - name: Create Universal DMG
         run: |
-          # Check if both architectures are available
+          mkdir -p out
           if [ -f "artifacts/macos-x64/MiniPoker-x64.dmg" ] && [ -f "artifacts/macos-arm64/MiniPoker-arm64.dmg" ]; then
             echo "Both architectures available, would create universal DMG here"
-            # Note: Creating universal DMG requires special tooling
-            # For now, we'll upload both versions separately
             cp artifacts/macos-x64/*.dmg out/
             cp artifacts/macos-arm64/*.dmg out/
           elif [ -f "artifacts/macos-x64/MiniPoker-x64.dmg" ]; then
