@@ -1,0 +1,63 @@
+{
+  "name": "@minipoker/electron-app",
+  "version": "1.0.0",
+  "private": true,
+  "main": ".vite/build/main.js",
+  "description": "Mini Poker - 扑克游戏合集",
+  "author": {
+    "name": "MiniPoker Team",
+    "email": "contact@minipoker.app"
+  },
+  "homepage": "https://minipoker.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/minipoker/minipoker.git"
+  },
+  "scripts": {
+    "dev": "electron-forge start",
+    "build": "electron-forge make",
+    "build:mac": "electron-forge make --platform darwin",
+    "build:mac:x64": "electron-forge make --platform darwin --arch x64",
+    "build:mac:arm64": "electron-forge make --platform darwin --arch arm64",
+    "build:mac:universal": "electron-forge make --platform darwin --arch universal",
+    "build:win": "electron-forge make --platform win32",
+    "build:win:x64": "electron-forge make --platform win32 --arch x64",
+    "build:win:arm64": "electron-forge make --platform win32 --arch arm64",
+    "build:linux": "electron-forge make --platform linux",
+    "build:linux:x64": "electron-forge make --platform linux --arch x64",
+    "build:linux:arm64": "electron-forge make --platform linux --arch arm64",
+    "package": "electron-forge package",
+    "package:mac:universal": "electron-forge package --platform darwin --arch universal",
+    "publish": "electron-forge publish",
+    "clean": "rm -rf .vite out"
+  },
+  "keywords": ["electron", "poker", "doudizhu", "guandan", "zhaojinhua"],
+  "license": "MIT",
+  "dependencies": {
+    "@minipoker/game-core": "workspace:*",
+    "pinia": "^2.1.7",
+    "socket.io-client": "^4.7.5",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-dmg": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-fuses": "^7.4.0",
+    "@electron-forge/publisher-github": "^7.4.0",
+    "@electron/fuses": "^1.8.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "electron": "^29.3.0",
+    "electron-notarize": "^1.2.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-electron": "^0.28.7",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vue-tsc": "^2.0.19"
+  }
+}
