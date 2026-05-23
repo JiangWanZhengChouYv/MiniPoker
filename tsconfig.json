@@ -1,19 +1,22 @@
-
 {
+  "files": [],
+  "references": [
+    { "path": "./packages/game-core" },
+    { "path": "./packages/electron-app" },
+    { "path": "./packages/macos-native" },
+    { "path": "./packages/server" }
+  ],
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
     "module": "ESNext",
-    "lib": ["ES2020"],
     "moduleResolution": "bundler",
+    "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
-  },
-  "exclude": ["node_modules", "dist"]
+    "sourceMap": true
+  }
 }

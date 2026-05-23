@@ -1,41 +1,22 @@
-export { Card, Suit, Rank } from './Card';
-export { Deck } from './Deck';
-export {
-  HandType,
-  HandResult,
-  DouDiZhuHandAnalyzer,
-  GameState,
-  PlayerRole,
-  Player,
-  BidAction,
-  PlayAction,
-  DouDiZhuGame
-} from './DouDiZhu';
-export {
-  GuanDanHandType,
-  GuanDanHandResult,
-  GuanDanDeck,
-  GuanDanHandAnalyzer,
-  GuanDanGameState,
-  GuanDanTeam,
-  GuanDanPlayer,
-  GuanDanPlayAction,
-  GuanDanGame
-} from './GuanDan';
-export {
-  ZhaJinHuaHandType,
-  ZhaJinHuaHandResult,
-  ZhaJinHuaHandAnalyzer,
-  ZhaJinHuaGameState,
-  ZhaJinHuaPlayer,
-  ZhaJinHuaActionType,
-  ZhaJinHuaAction,
-  ZhaJinHuaGame
-} from './ZhaJinHua';
-export {
-  IAIDecisionMaker,
-  AIDecisionContext,
-  AIDecision
-} from './AIDecision';
-export { AIHandGenerator } from './AIHandGenerator';
-export { SimpleDouDiZhuAI } from './SimpleDouDiZhuAI';
+// 版本信息
+export const gameCoreVersion = "1.0.0";
+
+// 类型定义
+export * from './types';
+
+// 卡牌工具
+export { CardUtil } from './card';
+
+// 牌堆管理
+export { Deck } from './deck';
+
+// 牌型判断
+export { HandUtil } from './hand';
+
+// 游戏实现
+export { DouDiZhuGame } from './games/doudizhu';
+export { GuanDanGame } from './games/guandan';
+export { ZhaJinHuaGame, ZhaJinHuaHandType } from './games/zhaojinhua';
+
+// AI 玩家
+export { SimpleAI } from './ai';

@@ -2,17 +2,28 @@
   "name": "minipoker",
   "version": "1.0.0",
   "private": true,
-  "description": "Mini Poker Monorepo",
+  "description": "MiniPoker Monorepo",
   "scripts": {
-    "dev": "pnpm -F * dev",
-    "build": "pnpm -F * build",
-    "test": "pnpm -F * test"
+    "dev": "pnpm -F '*' dev",
+    "dev:electron": "bash scripts/dev-electron.sh",
+    "dev:server": "pnpm --filter @minipoker/server dev",
+    "dev:core": "pnpm --filter @minipoker/game-core dev",
+    "build": "pnpm -F '*' build",
+    "build:core": "pnpm --filter @minipoker/game-core build",
+    "build:electron": "pnpm --filter @minipoker/electron-app build",
+    "build:server": "pnpm --filter @minipoker/server build",
+    "clean": "pnpm -F '*' clean",
+    "test": "pnpm --filter @minipoker/game-core test",
+    "test:watch": "pnpm --filter @minipoker/game-core test:watch"
   },
-  "devDependencies": {},
-  "keywords": ["poker", "monorepo"],
+  "keywords": ["poker", "monorepo", "pnpm"],
   "author": "",
   "license": "MIT",
-  "pnpm": {
-    "workspace": ["packages/*", "apps/*"]
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

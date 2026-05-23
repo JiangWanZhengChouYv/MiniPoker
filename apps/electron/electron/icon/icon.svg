@@ -1,6 +1,0 @@
-<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-  <rect x="2" y="1" width="12" height="14" rx="1.5" fill="white" stroke="#333" stroke-width="0.8"/>
-  <text x="3.5" y="4" font-size="4" font-weight="bold" fill="#e31b1b" font-family="Arial">A</text>
-  <text x="10.5" y="14" font-size="4" font-weight="bold" fill="#e31b1b" font-family="Arial" transform="rotate(180 10.5 14)">A</text>
-  <text x="8" y="9.5" font-size="6" fill="#e31b1b" font-family="Arial">♥</text>
-</svg>

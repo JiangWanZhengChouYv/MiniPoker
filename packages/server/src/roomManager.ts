@@ -1,80 +1,88 @@
-import type { Player, Room } from './types';
+import { Room, Player, GameType } from './types';
+import { DouDiZhuGame, GuanDanGame, ZhaJinHuaGame } from '@minipoker/game-core';
+import { v4 as uuidv4 } from 'crypto';
 
 export class RoomManager {
   private rooms: Map<string, Room> = new Map();
-  private players: Map<string, Player> = new Map();
 
-  createRoom(roomName: string, maxPlayers: number = 4): Room {
-    const roomId = this.generateId();
+  createRoom(name: string, gameType: GameType, maxPlayers: number, host: Player): Room {
+    const roomId = uuidv4().substring(0, 8);
     const room: Room = {
       id: roomId,
-      name: roomName,
-      players: new Map(),
+      name,
+      players: [host],
       maxPlayers,
+      gameType,
+      hostId: host.id,
       gameState: null,
-      createdAt: Date.now()
+      isPlaying: false,
     };
     this.rooms.set(roomId, room);
     return room;
   }
 
-  joinRoom(playerId: string, playerName: string, roomId: string): { success: boolean; room?: Room; message: string } {
+  joinRoom(roomId: string, player: Player): Room | null {
     const room = this.rooms.get(roomId);
-    if (!room) {
-      return { success: false, message: '房间不存在' };
-    }
+    if (!room) return null;
+    if (room.players.length >= room.maxPlayers) return null;
+    if (room.isPlaying) return null;
 
-    if (room.players.size >= room.maxPlayers) {
-      return { success: false, message: '房间已满' };
-    }
-
-    const player: Player = {
-      id: playerId,
-      name: playerName,
-      roomId
-    };
-
-    this.players.set(playerId, player);
-    room.players.set(playerId, player);
-
-    return { success: true, room, message: '加入成功' };
+    room.players.push(player);
+    return room;
   }
 
-  leaveRoom(playerId: string): { success: boolean; roomId?: string; message: string } {
-    const player = this.players.get(playerId);
-    if (!player || !player.roomId) {
-      return { success: false, message: '玩家不在任何房间' };
+  leaveRoom(roomId: string, playerId: string): Room | null {
+    const room = this.rooms.get(roomId);
+    if (!room) return null;
+
+    room.players = room.players.filter(p => p.id !== playerId);
+
+    if (room.players.length === 0) {
+      this.rooms.delete(roomId);
+      return null;
     }
 
-    const room = this.rooms.get(player.roomId);
-    if (room) {
-      room.players.delete(playerId);
-      if (room.players.size === 0) {
-        this.rooms.delete(room.id);
-      }
+    if (room.hostId === playerId) {
+      room.hostId = room.players[0].id;
     }
 
-    this.players.delete(playerId);
-    return { success: true, roomId: player.roomId, message: '离开成功' };
+    return room;
   }
 
   getRoom(roomId: string): Room | undefined {
     return this.rooms.get(roomId);
   }
 
-  // 转换房间对象以便序列化发送
-  serializeRoom(room: Room): any {
-    return {
-      ...room,
-      players: Array.from(room.players.values())
-    };
+  getRooms(): Room[] {
+    return Array.from(this.rooms.values());
   }
 
-  getAllRooms(): any[] {
-    return Array.from(this.rooms.values()).map(room => this.serializeRoom(room));
+  startGame(roomId: string): boolean {
+    const room = this.rooms.get(roomId);
+    if (!room) return false;
+    if (room.players.length < 2) return false;
+
+    room.isPlaying = true;
+
+    switch (room.gameType) {
+      case GameType.DOUDIZHU:
+        room.gameState = new DouDiZhuGame();
+        break;
+      case GameType.GUANDAN:
+        room.gameState = new GuanDanGame();
+        break;
+      case GameType.ZHAOJINHUA:
+        room.gameState = new ZhaJinHuaGame();
+        break;
+    }
+
+    return true;
   }
 
-  private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+  updateGameState(roomId: string, state: any): void {
+    const room = this.rooms.get(roomId);
+    if (room) {
+      room.gameState = state;
+    }
   }
 }
