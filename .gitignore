@@ -1,9 +1,0 @@
-.trae/
-.DS_STORE
-node_modules/
-packages/*/node_modules/
-
-# Electron 打包构建产物
-packages/electron-app/.vite/
-packages/electron-app/out/
-packages/electron-app/.env
